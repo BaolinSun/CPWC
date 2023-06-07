@@ -1,0 +1,425 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Computation of a STAI dataset with Field II using parameters of an L11-4v 128 element Verasonics Transducer and beamforming with USTB</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="STAI_L11_probe_sim.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Computation of a STAI dataset with Field II using parameters of an L11-4v 128 element Verasonics Transducer and beamforming with USTB</h1><!--introduction--><p>This example shows how to load the data from a Field II simulation into USTB objects, and then beamform it with the USTB routines. This example uses the L11-4v 128 element Verasonics Transducer The Field II simulation program (<a href="field-ii.dk">field-ii.dk</a>) should be in MATLAB's path.</p><p>This tutorial assumes familiarity with the contents of the <a href="../../fresnel/linear_array/html/CPWC_linear_array.html">'CPWC simulation with the USTB built-in Fresnel simulator'</a> tutorial. Please feel free to refer back to that for more details.</p><p>authors:       Alfonso Rodriguez-Molares <a href="alfonso.r.molares@ntnu.no">alfonso.r.molares@ntnu.no</a>                Ole Marius Hoel Rindal <a href="olemarius@olemarius.net">olemarius@olemarius.net</a></p><p>Last updated: 07.08.2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear old workspace and close old plots</a></li><li><a href="#2">Basic Constants</a></li><li><a href="#3">field II initialisation</a></li><li><a href="#4">Transducer definition L11-4v, 128-element linear array transducer</a></li><li><a href="#5">Pulse definition</a></li><li><a href="#6">Aperture Objects</a></li><li><a href="#7">Phantom</a></li><li><a href="#8">Output data</a></li><li><a href="#9">Compute STA signals</a></li><li><a href="#10">Channel Data</a></li><li><a href="#11">Scan</a></li><li><a href="#12">SCAN</a></li><li><a href="#13">Pipeline</a></li><li><a href="#15">Save UFF dataset</a></li></ul></div><h2 id="1">Clear old workspace and close old plots</h2><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+</pre><h2 id="2">Basic Constants</h2><p>Our first step is to define some basic constants for our imaging scenario - below, we set the speed of sound in the tissue, sampling frequency and sampling step size in time.</p><pre class="codeinput">c0=1540;     <span class="comment">% Speed of sound [m/s]</span>
+fs=100e6;    <span class="comment">% Sampling frequency [Hz]</span>
+dt=1/fs;     <span class="comment">% Sampling step [s]</span>
+</pre><h2 id="3">field II initialisation</h2><p>Next, we initialize the field II toolbox. Again, this only works if the Field II simulation program (<a href="field-ii.dk">field-ii.dk</a>) is in MATLAB's path. We also pass our set constants to it.</p><pre class="codeinput">field_init(0);
+set_field(<span class="string">'c'</span>,c0);              <span class="comment">% Speed of sound [m/s]</span>
+set_field(<span class="string">'fs'</span>,fs);             <span class="comment">% Sampling frequency [Hz]</span>
+set_field(<span class="string">'use_rectangles'</span>,1);  <span class="comment">% use rectangular elements</span>
+</pre><pre class="codeoutput">      *------------------------------------------------------------*
+      *                                                            *
+      *                      F I E L D   I I                       *
+      *                                                            *
+      *              Simulator for ultrasound systems              *
+      *                                                            *
+      *             Copyright by Joergen Arendt Jensen             *
+      *    Version 3.24a, May 24, 2014 (Matlab 8.20 gcc version)   *
+      *                  Web-site: field-ii.dk                     *
+      *                                                            *
+      *     This is citationware. Note the terms and conditions    *
+      *     for use on the web-site at:                            *
+      *               field-ii.dk/?copyright.html                  *
+      *  It is illegal to use this program, if the rules in the    *
+      *  copyright statement is not followed.                      *
+      *------------------------------------------------------------*
+Warning:  Remember to set all pulses in apertures for the new sampling frequency
+</pre><h2 id="4">Transducer definition L11-4v, 128-element linear array transducer</h2><p>Our next step is to define the ultrasound transducer array we are using. For this experiment, we shall use the L11-4v 128 element Verasonics Transducer and set our parameters to match it.</p><pre class="codeinput">probe = uff.linear_array();
+f0                      = 5.1333e+06;      <span class="comment">% Transducer center frequency [Hz]</span>
+lambda                  = c0/f0;           <span class="comment">% Wavelength [m]</span>
+probe.element_height    = 5e-3;            <span class="comment">% Height of element [m]</span>
+probe.pitch             = 0.300e-3;        <span class="comment">% probe.pitch [m]</span>
+kerf                    = 0.03e-03;        <span class="comment">% gap between elements [m]</span>
+probe.element_width     = probe.pitch-kerf;<span class="comment">% Width of element [m]</span>
+lens_el                 = 20e-3;           <span class="comment">% position of the elevation focus</span>
+probe.N                 = 128;             <span class="comment">% Number of elements</span>
+pulse_duration          = 2.5;             <span class="comment">% pulse duration [cycles]</span>
+</pre><h2 id="5">Pulse definition</h2><p>We then define the pulse-echo signal which is done here using the <b>fresnel</b> simulator's <b>pulse</b> structure. We could also use <a href="http://field-ii.dk/">'Field II'</a> for a more accurate model.</p><pre class="codeinput">pulse = uff.pulse();
+puse.center_frequency = f0;
+pulse.fractional_bandwidth = 0.65;        <span class="comment">% probe bandwidth [1]</span>
+t0 = (-1/pulse.fractional_bandwidth/f0): dt : (1/pulse.fractional_bandwidth/f0);
+impulse_response = gauspuls(t0, f0, pulse.fractional_bandwidth);
+impulse_response = impulse_response-mean(impulse_response); <span class="comment">% To get rid of DC</span>
+
+te = (-pulse_duration/2/f0): dt : (pulse_duration/2/f0);
+excitation = square(2*pi*f0*te+pi/2);
+one_way_ir = conv(impulse_response,excitation);
+two_way_ir = conv(one_way_ir,impulse_response);
+lag = length(two_way_ir)/2+1;
+
+<span class="comment">% We display the pulse to check that the lag estimation is on place</span>
+<span class="comment">% (and that the pulse is symmetric)</span>
+
+figure;
+plot((0:(length(two_way_ir)-1))*dt -lag*dt,two_way_ir); hold <span class="string">on</span>; grid <span class="string">on</span>; axis <span class="string">tight</span>
+plot((0:(length(two_way_ir)-1))*dt -lag*dt,abs(hilbert(two_way_ir)),<span class="string">'r'</span>)
+plot([0 0],[min(two_way_ir) max(two_way_ir)],<span class="string">'g'</span>);
+legend(<span class="string">'2-ways pulse'</span>,<span class="string">'Envelope'</span>,<span class="string">'Estimated lag'</span>);
+title(<span class="string">'2-ways impulse response Field II'</span>);
+</pre><img vspace="5" hspace="5" src="STAI_L11_probe_sim_01.png" alt=""> <h2 id="6">Aperture Objects</h2><p>Next, we define the the mesh geometry with the help of Field II's <b>xdc_linear_array</b> function.</p><pre class="codeinput">noSubAz=round(probe.element_width/(lambda/8));        <span class="comment">% number of subelements in the azimuth direction</span>
+noSubEl=round(probe.element_height/(lambda/8));       <span class="comment">% number of subelements in the elevation direction</span>
+Th = xdc_linear_array (probe.N, probe.element_width, probe.element_height, kerf, noSubAz, noSubEl, [0 0 Inf]);
+Rh = xdc_linear_array (probe.N, probe.element_width, probe.element_height, kerf, noSubAz, noSubEl, [0 0 Inf]);
+
+<span class="comment">% We also set the excitation, impulse response and baffle as below:</span>
+xdc_excitation (Th, excitation);
+xdc_impulse (Th, impulse_response);
+xdc_baffle(Th, 0);
+xdc_center_focus(Th,[0 0 0]);
+xdc_impulse (Rh, impulse_response);
+xdc_baffle(Rh, 0);
+xdc_center_focus(Rh,[0 0 0]);
+</pre><h2 id="7">Phantom</h2><p>In our next step, we define our phantom. Here, our phantom is a single point scatterer.</p><pre class="codeinput">sca=[0 0 20e-3];             <span class="comment">% list with the scatterers coordinates [m]</span>
+amp=1;                       <span class="comment">% list with the scatterers amplitudes</span>
+</pre><h2 id="8">Output data</h2><p>We define the variables to store our output data</p><pre class="codeinput">cropat=round(1.1*2*sqrt((max(sca(:,1))-min(probe.x))^2+max(sca(:,3))^2)/c0/dt);   <span class="comment">% maximum time sample, samples after this will be dumped</span>
+STA=zeros(cropat,probe.N,probe.N);    <span class="comment">% impulse response channel data</span>
+</pre><h2 id="9">Compute STA signals</h2><p>Now, we finally reach the stage where we generate a STA (Synthetic Transmit Aperture) dataset with the help of Field II.</p><pre class="codeinput">disp(<span class="string">'Field II: Computing STA dataset'</span>);
+wb = waitbar(0, <span class="string">'Field II: Computing STA dataset'</span>);
+<span class="keyword">for</span> n=1:probe.N
+    waitbar(n/probe.N, wb);
+
+    <span class="comment">% transmit aperture</span>
+    xdc_apodization(Th, 0, [zeros(1,n-1) 1 zeros(1,probe.N-n)]);
+    xdc_focus_times(Th, 0, zeros(1,probe.N));
+
+    <span class="comment">% receive aperture</span>
+    xdc_apodization(Rh, 0, ones(1,probe.N));
+    xdc_focus_times(Rh, 0, zeros(1,probe.N));
+
+    <span class="comment">% do calculation</span>
+    [v,t]=calc_scat_multi(Th, Rh, sca, amp);
+
+    <span class="comment">% build the dataset</span>
+    STA(1:size(v,1),:,n)=v;
+
+    <span class="comment">% Sequence generation</span>
+    seq(n)=uff.wave();
+    seq(n).probe=probe;
+    seq(n).source.xyz=[probe.x(n) probe.y(n) probe.z(n)];
+    seq(n).sound_speed=c0;
+    seq(n).delay = probe.r(n)/c0-lag*dt+t; <span class="comment">% t0 and center of pulse compensation</span>
+<span class="keyword">end</span>
+close(wb);
+</pre><pre class="codeoutput">Field II: Computing STA dataset
+</pre><h2 id="10">Channel Data</h2><p>In this part of the code, we creat a uff data structure to specifically store the captured ultrasound channel data.</p><pre class="codeinput">channel_data = uff.channel_data();
+channel_data.sampling_frequency = fs;
+channel_data.sound_speed = c0;
+channel_data.initial_time = 0;
+channel_data.pulse = pulse;
+channel_data.probe = probe;
+channel_data.sequence = seq;
+channel_data.data = STA./max(STA(:));
+</pre><h2 id="11">Scan</h2><p>The scan area is defines as a collection of pixels spanning our region of interest. For our example here, we use the <b>linear_scan</b> structure, which is defined with two components: the lateral range and the depth range. <b>scan</b> too has a useful <b>plot</b> method it can call.</p><h2 id="12">SCAN</h2><pre class="codeinput">sca=uff.linear_scan(<span class="string">'x_axis'</span>,linspace(-4e-3,4e-3,256).', <span class="string">'z_axis'</span>, linspace(16e-3,24e-3,256).');
+</pre><h2 id="13">Pipeline</h2><p>With <b>channel_data</b> and a <b>scan</b> we have all we need to produce an ultrasound image. We now use a USTB structure <b>pipeline</b>, that takes an <b>apodization</b> structure in addition to the <b>channel_data</b> and <b>scan</b>.</p><pre class="codeinput">pipe=pipeline();
+pipe.channel_data=channel_data;
+pipe.scan=sca;
+
+pipe.receive_apodization.window=uff.window.boxcar;
+pipe.receive_apodization.f_number=1.7;
+pipe.transmit_apodization.window=uff.window.boxcar;
+pipe.transmit_apodization.f_number=1.7;
+</pre><p>The <b>pipeline</b> structure allows you to implement different beamformers by combination of multiple built-in <b>processes</b>. By changing the <b>process</b> chain other beamforming sequences can be implemented. It returns yet another <b>UFF</b> structure: <b>beamformed_data</b>.</p><p>To achieve the goal of this example, we use delay-and-sum (implemented in the <b>das_mex()</b> process) as well as coherent compounding.</p><pre class="codeinput">b_data=pipe.go({midprocess.das() postprocess.coherent_compounding()});
+
+<span class="comment">% Display images</span>
+b_data.plot()
+</pre><pre class="codeoutput">USTB General beamformer MEX v1.1.2 .............done!
+
+ans = 
+
+  Figure (2) with properties:
+
+      Number: 2
+        Name: ''
+       Color: [1 1 1]
+    Position: [680 558 560 420]
+       Units: 'pixels'
+
+  Use GET to show all properties
+
+</pre><img vspace="5" hspace="5" src="STAI_L11_probe_sim_02.png" alt=""> <h2 id="15">Save UFF dataset</h2><p>Finally, we save the data into a UFF file.</p><pre class="codeinput">channel_data.write([ustb_path(),<span class="string">'/data/FieldII_PSF_simulation_v2.uff'</span>],<span class="string">'channel_data'</span>);
+</pre><pre class="codeoutput">Time out! channel_data not written
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Computation of a STAI dataset with Field II using parameters of an L11-4v 128 element Verasonics Transducer and beamforming with USTB
+%
+% This example shows how to load the data from a Field II simulation into 
+% USTB objects, and then beamform it with the USTB routines. 
+% This example uses the L11-4v 128 element Verasonics Transducer
+% The Field II simulation program (<field-ii.dk>) should be in MATLAB's path.
+%
+% This tutorial assumes familiarity with the contents of the 
+% <../../fresnel/linear_array/html/CPWC_linear_array.html 'CPWC simulation with the USTB built-in Fresnel 
+% simulator'> tutorial. Please feel free to refer back to that for more 
+% details.
+% 
+% authors:       Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no>
+%                Ole Marius Hoel Rindal <olemarius@olemarius.net>
+%
+% Last updated: 07.08.2017
+
+%% Clear old workspace and close old plots
+
+clear all;
+close all;
+
+%% Basic Constants
+% 
+% Our first step is to define some basic constants for our imaging scenario
+% - below, we set the speed of sound in the tissue, sampling frequency and
+% sampling step size in time.
+
+c0=1540;     % Speed of sound [m/s]
+fs=100e6;    % Sampling frequency [Hz]
+dt=1/fs;     % Sampling step [s] 
+
+%% field II initialisation
+% 
+% Next, we initialize the field II toolbox. Again, this only works if the 
+% Field II simulation program (<field-ii.dk>) is in MATLAB's path. We also
+% pass our set constants to it.
+
+field_init(0);
+set_field('c',c0);              % Speed of sound [m/s]
+set_field('fs',fs);             % Sampling frequency [Hz]
+set_field('use_rectangles',1);  % use rectangular elements
+
+%% Transducer definition L11-4v, 128-element linear array transducer
+% 
+% Our next step is to define the ultrasound transducer array we are using.
+% For this experiment, we shall use the L11-4v 128 element Verasonics
+% Transducer and set our parameters to match it.
+
+probe = uff.linear_array();
+f0                      = 5.1333e+06;      % Transducer center frequency [Hz]
+lambda                  = c0/f0;           % Wavelength [m]
+probe.element_height    = 5e-3;            % Height of element [m]
+probe.pitch             = 0.300e-3;        % probe.pitch [m]
+kerf                    = 0.03e-03;        % gap between elements [m]
+probe.element_width     = probe.pitch-kerf;% Width of element [m]
+lens_el                 = 20e-3;           % position of the elevation focus
+probe.N                 = 128;             % Number of elements
+pulse_duration          = 2.5;             % pulse duration [cycles]
+
+%% Pulse definition
+% 
+% We then define the pulse-echo signal which is done here using the 
+% *fresnel* simulator's *pulse* structure. We could also use 
+% <http://field-ii.dk/ 'Field II'> for a more accurate model.
+
+pulse = uff.pulse();
+puse.center_frequency = f0;
+pulse.fractional_bandwidth = 0.65;        % probe bandwidth [1]
+t0 = (-1/pulse.fractional_bandwidth/f0): dt : (1/pulse.fractional_bandwidth/f0);
+impulse_response = gauspuls(t0, f0, pulse.fractional_bandwidth);
+impulse_response = impulse_response-mean(impulse_response); % To get rid of DC
+
+te = (-pulse_duration/2/f0): dt : (pulse_duration/2/f0);
+excitation = square(2*pi*f0*te+pi/2);
+one_way_ir = conv(impulse_response,excitation);
+two_way_ir = conv(one_way_ir,impulse_response);
+lag = length(two_way_ir)/2+1;   
+
+% We display the pulse to check that the lag estimation is on place 
+% (and that the pulse is symmetric)
+
+figure;
+plot((0:(length(two_way_ir)-1))*dt -lag*dt,two_way_ir); hold on; grid on; axis tight
+plot((0:(length(two_way_ir)-1))*dt -lag*dt,abs(hilbert(two_way_ir)),'r')
+plot([0 0],[min(two_way_ir) max(two_way_ir)],'g');
+legend('2-ways pulse','Envelope','Estimated lag');
+title('2-ways impulse response Field II');
+
+%% Aperture Objects
+% Next, we define the the mesh geometry with the help of Field II's
+% *xdc_linear_array* function.
+
+noSubAz=round(probe.element_width/(lambda/8));        % number of subelements in the azimuth direction
+noSubEl=round(probe.element_height/(lambda/8));       % number of subelements in the elevation direction
+Th = xdc_linear_array (probe.N, probe.element_width, probe.element_height, kerf, noSubAz, noSubEl, [0 0 Inf]); 
+Rh = xdc_linear_array (probe.N, probe.element_width, probe.element_height, kerf, noSubAz, noSubEl, [0 0 Inf]); 
+
+% We also set the excitation, impulse response and baffle as below:
+xdc_excitation (Th, excitation);
+xdc_impulse (Th, impulse_response);
+xdc_baffle(Th, 0);
+xdc_center_focus(Th,[0 0 0]);
+xdc_impulse (Rh, impulse_response);
+xdc_baffle(Rh, 0);
+xdc_center_focus(Rh,[0 0 0]);
+
+%% Phantom
+%
+% In our next step, we define our phantom. Here, our phantom is a single point 
+% scatterer. 
+
+sca=[0 0 20e-3];             % list with the scatterers coordinates [m]
+amp=1;                       % list with the scatterers amplitudes
+
+%% Output data
+% 
+% We define the variables to store our output data
+cropat=round(1.1*2*sqrt((max(sca(:,1))-min(probe.x))^2+max(sca(:,3))^2)/c0/dt);   % maximum time sample, samples after this will be dumped
+STA=zeros(cropat,probe.N,probe.N);    % impulse response channel data
+
+%% Compute STA signals
+% 
+% Now, we finally reach the stage where we generate a STA (Synthetic
+% Transmit Aperture) dataset with the help of Field II.
+
+disp('Field II: Computing STA dataset');
+wb = waitbar(0, 'Field II: Computing STA dataset');
+for n=1:probe.N
+    waitbar(n/probe.N, wb);
+
+    % transmit aperture
+    xdc_apodization(Th, 0, [zeros(1,n-1) 1 zeros(1,probe.N-n)]);
+    xdc_focus_times(Th, 0, zeros(1,probe.N));
+    
+    % receive aperture    
+    xdc_apodization(Rh, 0, ones(1,probe.N));
+    xdc_focus_times(Rh, 0, zeros(1,probe.N));
+    
+    % do calculation
+    [v,t]=calc_scat_multi(Th, Rh, sca, amp);
+    
+    % build the dataset
+    STA(1:size(v,1),:,n)=v;
+    
+    % Sequence generation  
+    seq(n)=uff.wave();
+    seq(n).probe=probe;
+    seq(n).source.xyz=[probe.x(n) probe.y(n) probe.z(n)];
+    seq(n).sound_speed=c0;
+    seq(n).delay = probe.r(n)/c0-lag*dt+t; % t0 and center of pulse compensation
+end
+close(wb);
+
+%% Channel Data
+% 
+% In this part of the code, we creat a uff data structure to specifically
+% store the captured ultrasound channel data.
+
+channel_data = uff.channel_data();
+channel_data.sampling_frequency = fs;
+channel_data.sound_speed = c0;
+channel_data.initial_time = 0;
+channel_data.pulse = pulse;
+channel_data.probe = probe;
+channel_data.sequence = seq;
+channel_data.data = STA./max(STA(:));
+
+%% Scan
+%
+% The scan area is defines as a collection of pixels spanning our region of 
+% interest. For our example here, we use the *linear_scan* structure, 
+% which is defined with two components: the lateral range and the 
+% depth range. *scan* too has a useful *plot* method it can call.
+
+%% SCAN
+sca=uff.linear_scan('x_axis',linspace(-4e-3,4e-3,256).', 'z_axis', linspace(16e-3,24e-3,256).');
+
+%% Pipeline
+%
+% With *channel_data* and a *scan* we have all we need to produce an
+% ultrasound image. We now use a USTB structure *pipeline*, that takes an
+% *apodization* structure in addition to the *channel_data* and *scan*.
+
+pipe=pipeline();
+pipe.channel_data=channel_data;
+pipe.scan=sca;
+
+pipe.receive_apodization.window=uff.window.boxcar;
+pipe.receive_apodization.f_number=1.7;
+pipe.transmit_apodization.window=uff.window.boxcar;
+pipe.transmit_apodization.f_number=1.7;
+
+%% 
+%
+% The *pipeline* structure allows you to implement different beamformers 
+% by combination of multiple built-in *processes*. By changing the *process*
+% chain other beamforming sequences can be implemented. It returns yet 
+% another *UFF* structure: *beamformed_data*.
+% 
+% To achieve the goal of this example, we use delay-and-sum (implemented in 
+% the *das_mex()* process) as well as coherent compounding.
+
+b_data=pipe.go({midprocess.das() postprocess.coherent_compounding()});
+
+% Display images
+b_data.plot()
+
+%% Save UFF dataset
+% 
+% Finally, we save the data into a UFF file.
+channel_data.write([ustb_path(),'/data/FieldII_PSF_simulation_v2.uff'],'channel_data');
+##### SOURCE END #####
+--></body></html>

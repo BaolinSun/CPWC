@@ -1,0 +1,302 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CPWC movement simulation with the USTB built-in Fresnel simulator</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="CPWC_linear_array_multiframe.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>CPWC movement simulation with the USTB built-in Fresnel simulator</h1><!--introduction--><p>In this example we show how to use the built-in fresnel simulator in USTB to generate a Coherent Plane-Wave Compounding (CPWC) squence on a linear array and simulate movement.</p><p>Related materials:</p><div><ul><li><a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4816058">Montaldo et al. 2009</a></li></ul></div><p>This tutorial assumes familiarity with the contents of the <a href="./CPWC_linear_array.html">'CPWC simulation with the USTB built-in Fresnel simulator'</a> tutorial. Please feel free to refer back to that for more details.</p><p><i>by Alfonso Rodriguez-Molares <a href="alfonso.r.molares@ntnu.no">alfonso.r.molares@ntnu.no</a> 13.03.2017 and Arun Asokan nair <a href="anair8@jhu.edu">anair8@jhu.edu</a></i></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Phantom</a></li><li><a href="#3">Probe</a></li><li><a href="#4">Pulse</a></li><li><a href="#5">Sequence generation</a></li><li><a href="#6">Simulator</a></li><li><a href="#7">Scan</a></li><li><a href="#8">Midprocess</a></li></ul></div><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+</pre><h2 id="2">Phantom</h2><p>Our first step is to define an appropriate <b>phantom</b> structure as input, or as in this case a series of <b>phantom</b> structures each corresponding to the distribution of point scatterers at a certain point in time. This distribution is determined by the variables defined below.</p><pre class="codeinput">alpha=-45*pi/180;                 <span class="comment">% velocity direction [rad]</span>
+N_sca=1;                          <span class="comment">% number of scatterers</span>
+<span class="comment">% x_sca=random('unif',-2e-3,2e-3,N_sca,1); % Uncomment this if using</span>
+                                            <span class="comment">% multiple scatterers</span>
+<span class="comment">% z_sca=random('unif',18e-3,22e-3,N_sca,1);  % Uncomment this if using</span>
+                                            <span class="comment">% multiple scatterers</span>
+x_sca=-1e-3;                      <span class="comment">% Comment this out if using multiple scatterers</span>
+z_sca=21e-3;                      <span class="comment">% Comment this out if using multiple scatterers</span>
+p=[x_sca zeros(N_sca,1) z_sca+x_sca*sin(alpha)];
+v=0.9754*ones(N_sca,1)*[cos(alpha) 0 sin(alpha)]; <span class="comment">% scatterer velocity [m/s m/s m/s]</span>
+PRF=10000;                           <span class="comment">% pulse repetition frequency [Hz]</span>
+N_plane_waves=3;                     <span class="comment">% number of plane wave</span>
+N_frames=10;                         <span class="comment">% number of frames</span>
+fig_handle=figure();
+<span class="keyword">for</span> n=1:N_plane_waves*N_frames
+    pha(n)=uff.phantom();
+    pha(n).sound_speed=1540;            <span class="comment">% speed of sound [m/s]</span>
+    pha(n).points=[p+v*(n-1)/PRF, ones(N_sca,1)];    <span class="comment">% point scatterer position [m]</span>
+    pha(n).plot(fig_handle);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="CPWC_linear_array_multiframe_01.png" alt=""> <h2 id="3">Probe</h2><p>The next step is to define the <b>probe</b> structure which contains information about the probe's geometry. This too comes with % a <b>plot</b> method that enables visualization of the probe with respect to the phantom. The probe we will use in our example is a linear array transducer with 128 elements.</p><pre class="codeinput">prb=uff.linear_array();
+prb.N=128;                  <span class="comment">% number of elements</span>
+prb.pitch=300e-6;           <span class="comment">% probe pitch in azimuth [m]</span>
+prb.element_width=270e-6;   <span class="comment">% element width [m]</span>
+prb.element_height=5000e-6; <span class="comment">% element height [m]</span>
+prb.plot(fig_handle);
+</pre><img vspace="5" hspace="5" src="CPWC_linear_array_multiframe_02.png" alt=""> <h2 id="4">Pulse</h2><p>We then define the pulse-echo signal which is done here using the <b>fresnel</b> simulator's <b>pulse</b> structure. We could also use <a href="http://field-ii.dk/">'Field II'</a> for a more accurate model.</p><pre class="codeinput">pul=uff.pulse();
+pul.center_frequency=5.2e6;       <span class="comment">% transducer frequency [MHz]</span>
+pul.fractional_bandwidth=0.6;     <span class="comment">% fractional bandwidth [unitless]</span>
+pul.plot([],<span class="string">'2-way pulse'</span>);
+</pre><img vspace="5" hspace="5" src="CPWC_linear_array_multiframe_03.png" alt=""> <h2 id="5">Sequence generation</h2><p>Now, we shall generate our sequence! Keep in mind that the <b>fresnel</b> simulator takes the same sequence definition as the USTB beamformer. In UFF and USTB a sequence is defined as a collection of <b>wave</b> structures.</p><p>For our example here, we define a sequence of 15 plane-waves covering an angle span of <img src="CPWC_linear_array_multiframe_eq14339125197225071258.png" alt="$[-0.3, 0.3]$"> radians. The <b>wave</b> structure has a <b>plot</b> method which plots the direction of the transmitted plane-wave.</p><pre class="codeinput">angles=linspace(-0.3,0.3,N_plane_waves);
+seq=uff.wave();
+<span class="keyword">for</span> n=1:N_plane_waves
+    seq(n)=uff.wave();
+
+    seq(n).source.azimuth=angles(n);
+    seq(n).source.distance=Inf;
+
+    seq(n).probe=prb;
+
+    seq(n).sound_speed=pha.sound_speed;
+
+    <span class="comment">% show source</span>
+    fig_handle=seq(n).source.plot(fig_handle);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="CPWC_linear_array_multiframe_04.png" alt=""> <h2 id="6">Simulator</h2><p>Finally, we launch the built-in fresnel simulator. The simulator takes in a <b>phantom</b>, <b>pulse</b>, <b>probe</b> and a sequence of <b>wave</b> structures along with the desired sampling frequency, and returns a <b>channel_data</b> UFF structure.</p><pre class="codeinput">sim=fresnel();
+
+<span class="comment">% setting input data</span>
+sim.phantom=pha;                <span class="comment">% phantom</span>
+sim.pulse=pul;                  <span class="comment">% transmitted pulse</span>
+sim.probe=prb;                  <span class="comment">% probe</span>
+sim.sequence=seq;               <span class="comment">% beam sequence</span>
+sim.PRF=PRF;                    <span class="comment">% pulse repetition frequency [Hz]</span>
+sim.sampling_frequency=41.6e6;  <span class="comment">% sampling frequency [Hz]</span>
+
+<span class="comment">% we launch the simulation</span>
+channel_data=sim.go();
+</pre><pre class="codeoutput">USTB's Fresnel impulse response simulator (v1.0.7)
+---------------------------------------------------------------
+</pre><h2 id="7">Scan</h2><p>The scan area is defines as a collection of pixels spanning our region of interest. For our example here, we use the <b>linear_scan</b> structure, which is defined with just two axes. <b>scan</b> too has a useful <b>plot</b> method it can call.</p><pre class="codeinput">scan=uff.linear_scan(<span class="string">'x_axis'</span>,linspace(-5e-3,5e-3,256).',<span class="string">'z_axis'</span>, linspace(15e-3,25e-3,256).');
+scan.plot(fig_handle,<span class="string">'Scenario'</span>);    <span class="comment">% show mesh</span>
+</pre><img vspace="5" hspace="5" src="CPWC_linear_array_multiframe_05.png" alt=""> <h2 id="8">Midprocess</h2><p>With <b>channel_data</b> and a <b>scan</b> we have all we need to produce an ultrasound image. We now use a USTB structure <b>midprocess</b>, that takes an <b>apodization</b> structure in addition to the <b>channel_data</b> and <b>scan</b> and produces a <b>beamformed_data</b> structure.</p><pre class="codeinput">mid=midprocess.das();
+mid.dimension = dimension.both;
+mid.channel_data=channel_data;
+mid.scan=scan;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.0;
+
+mid.transmit_apodization.window=uff.window.tukey50;
+mid.transmit_apodization.f_number=1.0;
+
+b_data=mid.go();
+b_data.plot([],[<span class="string">'Beamformed data'</span>],40);
+</pre><pre class="codeoutput">USTB General beamformer MEX v1.1.2 .............done!
+</pre><img vspace="5" hspace="5" src="CPWC_linear_array_multiframe_06.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% CPWC movement simulation with the USTB built-in Fresnel simulator
+%
+% In this example we show how to use the built-in fresnel simulator in USTB
+% to generate a Coherent Plane-Wave Compounding (CPWC) squence on a linear
+% array and simulate movement.
+%
+% Related materials:
+%
+% * <http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4816058 Montaldo et al. 2009>
+%
+% This tutorial assumes familiarity with the contents of the 
+% <./CPWC_linear_array.html 'CPWC simulation with the USTB built-in Fresnel 
+% simulator'> tutorial. Please feel free to refer back to that for more 
+% details.
+%
+% _by Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no> 13.03.2017 and 
+% Arun Asokan nair <anair8@jhu.edu>_
+
+%%
+clear all;
+close all;
+
+%% Phantom
+%
+% Our first step is to define an appropriate *phantom* structure as input,
+% or as in this case a series of *phantom* structures each corresponding to
+% the distribution of point scatterers at a certain point in time. This
+% distribution is determined by the variables defined below.
+
+alpha=-45*pi/180;                 % velocity direction [rad]
+N_sca=1;                          % number of scatterers
+% x_sca=random('unif',-2e-3,2e-3,N_sca,1); % Uncomment this if using
+                                            % multiple scatterers
+% z_sca=random('unif',18e-3,22e-3,N_sca,1);  % Uncomment this if using
+                                            % multiple scatterers
+x_sca=-1e-3;                      % Comment this out if using multiple scatterers
+z_sca=21e-3;                      % Comment this out if using multiple scatterers
+p=[x_sca zeros(N_sca,1) z_sca+x_sca*sin(alpha)];
+v=0.9754*ones(N_sca,1)*[cos(alpha) 0 sin(alpha)]; % scatterer velocity [m/s m/s m/s]
+PRF=10000;                           % pulse repetition frequency [Hz]
+N_plane_waves=3;                     % number of plane wave
+N_frames=10;                         % number of frames
+fig_handle=figure();
+for n=1:N_plane_waves*N_frames
+    pha(n)=uff.phantom();
+    pha(n).sound_speed=1540;            % speed of sound [m/s]
+    pha(n).points=[p+v*(n-1)/PRF, ones(N_sca,1)];    % point scatterer position [m]
+    pha(n).plot(fig_handle);             
+end
+             
+%% Probe
+%
+% The next step is to define the *probe* structure which contains
+% information about the probe's geometry. This too comes with % a *plot* 
+% method that enables visualization of the probe with respect to the phantom.
+% The probe we will use in our example is a linear array transducer with
+% 128 elements.
+
+prb=uff.linear_array();
+prb.N=128;                  % number of elements 
+prb.pitch=300e-6;           % probe pitch in azimuth [m]
+prb.element_width=270e-6;   % element width [m]
+prb.element_height=5000e-6; % element height [m]
+prb.plot(fig_handle);
+
+%% Pulse
+% 
+% We then define the pulse-echo signal which is done here using the 
+% *fresnel* simulator's *pulse* structure. We could also use 
+% <http://field-ii.dk/ 'Field II'> for a more accurate model.
+
+pul=uff.pulse();
+pul.center_frequency=5.2e6;       % transducer frequency [MHz]
+pul.fractional_bandwidth=0.6;     % fractional bandwidth [unitless]
+pul.plot([],'2-way pulse');
+
+%% Sequence generation
+%
+% Now, we shall generate our sequence! Keep in mind that the *fresnel* simulator
+% takes the same sequence definition as the USTB beamformer. In UFF and
+% USTB a sequence is defined as a collection of *wave* structures. 
+% 
+% For our example here, we define a sequence of 15 plane-waves 
+% covering an angle span of $[-0.3, 0.3]$ radians. The *wave* structure has 
+% a *plot* method which plots the direction of the transmitted plane-wave.
+
+angles=linspace(-0.3,0.3,N_plane_waves);
+seq=uff.wave();
+for n=1:N_plane_waves 
+    seq(n)=uff.wave();
+    
+    seq(n).source.azimuth=angles(n);
+    seq(n).source.distance=Inf;
+    
+    seq(n).probe=prb;
+    
+    seq(n).sound_speed=pha.sound_speed;
+    
+    % show source
+    fig_handle=seq(n).source.plot(fig_handle);
+end
+
+%% Simulator
+%
+% Finally, we launch the built-in fresnel simulator. The simulator takes in 
+% a *phantom*, *pulse*, *probe* and a sequence of *wave* structures along 
+% with the desired sampling frequency, and returns a *channel_data* UFF 
+% structure.
+
+sim=fresnel();
+
+% setting input data 
+sim.phantom=pha;                % phantom
+sim.pulse=pul;                  % transmitted pulse
+sim.probe=prb;                  % probe
+sim.sequence=seq;               % beam sequence
+sim.PRF=PRF;                    % pulse repetition frequency [Hz]
+sim.sampling_frequency=41.6e6;  % sampling frequency [Hz]
+
+% we launch the simulation
+channel_data=sim.go();
+ 
+%% Scan
+%
+% The scan area is defines as a collection of pixels spanning our region of 
+% interest. For our example here, we use the *linear_scan* structure, 
+% which is defined with just two axes. *scan* too has a useful *plot*
+% method it can call.
+
+scan=uff.linear_scan('x_axis',linspace(-5e-3,5e-3,256).','z_axis', linspace(15e-3,25e-3,256).');
+scan.plot(fig_handle,'Scenario');    % show mesh
+ 
+%% Midprocess
+%
+% With *channel_data* and a *scan* we have all we need to produce an
+% ultrasound image. We now use a USTB structure *midprocess*, that takes an
+% *apodization* structure in addition to the *channel_data* and *scan* and
+% produces a *beamformed_data* structure.
+
+mid=midprocess.das();
+mid.dimension = dimension.both;
+mid.channel_data=channel_data;
+mid.scan=scan;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.0;
+
+mid.transmit_apodization.window=uff.window.tukey50;
+mid.transmit_apodization.f_number=1.0;
+
+b_data=mid.go();
+b_data.plot([],['Beamformed data'],40);
+##### SOURCE END #####
+--></body></html>

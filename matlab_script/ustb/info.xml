@@ -1,0 +1,23 @@
+<productinfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="optional">
+    <?xml-stylesheet type="text/xsl"href="optional"?>
+    <!-- info.xml file for the UltraSound ToolBox -->
+    <!-- Version 2.0.3 -->
+    <!--  The USTB team-->
+     
+    <matlabrelease>R2014b</matlabrelease>
+    <name>UltraSound ToolBox</name>
+    <type>toolbox</type>
+    <icon>$toolbox/matlab/icons/matlabicon.gif</icon>
+    <help_location>./helpfiles</help_location>
+  	
+    <list>
+		<listitem>
+			<label>Product Page (Web)</label>
+			<callback>web www.ustb.no -browser</callback>
+			<icon>$toolbox/matlab/icons/webicon.gif</icon>
+		</listitem>
+	</list>
+    
+</productinfo>
+

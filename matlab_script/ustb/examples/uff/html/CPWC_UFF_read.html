@@ -1,0 +1,226 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reading data from an UFF file</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="CPWC_UFF_read.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Reading data from an UFF file</h1><!--introduction--><p>In this example we show how to read channel and beamformed data from a UFF (Ultrasound File Format) file. You will need an internet connection to download data. Otherwise, you can run the <b>CPWC_UFF_write.m</b> first so the file 'test01.uff' is in the current path.</p><p><i>by Alfonso Rodriguez-Molares <a href="alfonso.r.molares@ntnu.no">alfonso.r.molares@ntnu.no</a> 07.08.2017</i></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Checking the file is in the path</a></li><li><a href="#2">Reading beamformed data</a></li><li><a href="#6">Reading channel data</a></li><li><a href="#9">Reading once and for all</a></li></ul></div><h2 id="1">Checking the file is in the path</h2><p>To read data from a UFF file the first we need is, you guessed it, a UFF file. We check if it is on the current path and download it from the USTB server otherwise.</p><pre class="codeinput"><span class="comment">% data location</span>
+url=<span class="string">'http://www.ustb.no/datasets/'</span>;   <span class="comment">% if not found data will be downloaded from here</span>
+filename=<span class="string">'test02.uff'</span>;
+
+<span class="comment">% checks if the data is in your data path, and downloads it otherwise.</span>
+<span class="comment">% The defaults data path is under USTB's folder, but you can change this</span>
+<span class="comment">% by setting an environment variable with setenv(DATA_PATH,'the_path_you_want_to_use');</span>
+tools.download(filename, url, data_path);
+</pre><pre class="codeoutput">USTB download tool
+File:		test02.uff
+URL:		http://www.ustb.no/datasets//test02.uff
+Path:		C:\Users\47456\AppData\Roaming\MathWorks\MATLAB 
+			Add-Ons\Toolboxes\USTB\data
+</pre><pre class="codeoutput error">Error using tools.download (line 113)
+The HTTP request failed with error 404
+
+Error in CPWC_UFF_read (line 23)
+tools.download(filename, url, data_path);   
+</pre><h2 id="2">Reading beamformed data</h2><p>Now that the file is in the machine we can start loading data. The first would be to check what is in there with the <b>uff.index</b> function</p><pre class="codeinput">uff.index([data_path filesep filename],<span class="string">'/'</span>,display);
+</pre><p>We see there is a <b>beamformed_data</b> dataset with name <i>b_data</i>. Let us load it and plot it. There are two ways of reading data from file:</p><div><ul><li>we can define an object of the correct class and use the method <b>read</b>:</li></ul></div><pre class="codeinput">b_data=uff.beamformed_data();
+b_data.read([data_path filesep filename],<span class="string">'/b_data'</span>);
+</pre><div><ul><li>or we can use the function <b>uff.read_object</b> and let the function create the correct object class for us</li></ul></div><pre class="codeinput">b_data2=uff.read_object([data_path filesep filename],<span class="string">'/b_data'</span>);
+</pre><p>Either way the result is the correct uff.beamformed_data</p><pre class="codeinput">figure;
+h1=subplot(1,2,1)
+b_data.plot(h1,<span class="string">'object.read'</span>);
+h2=subplot(1,2,2)
+b_data2.plot(h2,<span class="string">'uff.read object'</span>);
+</pre><h2 id="6">Reading channel data</h2><p>There are also two other structures in the file: a uff.scan and a uff.channel_data objects. Let us read them both</p><pre class="codeinput"><span class="comment">%scan=uff.read_object(filename,'/scan');</span>
+channel_data=uff.read_object([data_path filesep filename],<span class="string">'/channel_data'</span>);
+</pre><p>And let us beamform that data with USTB</p><pre class="codeinput">mid=midprocess.das();
+mid.dimension = dimension.both;
+
+mid.channel_data=channel_data;
+mid.scan=scan;
+
+mid.transmit_apodization.window=uff.window.tukey50;
+mid.transmit_apodization.f_number=1.0;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.0;
+
+<span class="comment">% beamforming</span>
+b_data=mid.go();
+b_data.plot();
+</pre><p>which matches the images we saw previously.</p><h2 id="9">Reading once and for all</h2><p>It is possible to load all the data in the file into matlab memory without having to access each dataset individually. It suffices to call the <b>read</b> method without parameters and...</p><pre class="codeinput">vars=uff.read_object([data_path filesep filename]);
+</pre><p>... we get all the objects in the file into a cell structure</p><pre class="codeinput">vars{1}.plot();
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reading data from an UFF file
+%
+% In this example we show how to read channel and beamformed data from a
+% UFF (Ultrasound File Format) file. You will need an internet connection
+% to download data. Otherwise, you can run the *CPWC_UFF_write.m* first so
+% the file 'test01.uff' is in the current path.
+%
+% _by Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no> 07.08.2017_
+
+%% Checking the file is in the path
+%
+% To read data from a UFF file the first we need is, you guessed it, a UFF
+% file. We check if it is on the current path and download it from the USTB 
+% server otherwise.
+
+% data location
+url='http://www.ustb.no/datasets/';   % if not found data will be downloaded from here
+filename='test02.uff';
+
+% checks if the data is in your data path, and downloads it otherwise.
+% The defaults data path is under USTB's folder, but you can change this
+% by setting an environment variable with setenv(DATA_PATH,'the_path_you_want_to_use');
+tools.download(filename, url, data_path);   
+
+%% Reading beamformed data
+%
+% Now that the file is in the machine we can start loading data. The first 
+% would be to check what is in there with the *uff.index* function 
+uff.index([data_path filesep filename],'/',display);
+
+%%
+% 
+% We see there is a *beamformed_data* dataset with name _b_data_. Let us
+% load it and plot it. There are two ways of reading data from file: 
+%
+% * we can define an object of the correct class and use the method *read*:
+
+b_data=uff.beamformed_data();
+b_data.read([data_path filesep filename],'/b_data');
+
+%%
+% 
+% * or we can use the function *uff.read_object* and let the function
+% create the correct object class for us
+
+b_data2=uff.read_object([data_path filesep filename],'/b_data');
+
+%%
+% 
+% Either way the result is the correct uff.beamformed_data
+
+figure;
+h1=subplot(1,2,1)
+b_data.plot(h1,'object.read');
+h2=subplot(1,2,2)
+b_data2.plot(h2,'uff.read object');
+
+%% Reading channel data
+%
+% There are also two other structures in the file: a uff.scan and a
+% uff.channel_data objects. Let us read them both
+
+%scan=uff.read_object(filename,'/scan');
+channel_data=uff.read_object([data_path filesep filename],'/channel_data');
+
+%%
+%
+% And let us beamform that data with USTB
+ 
+mid=midprocess.das();
+mid.dimension = dimension.both;
+
+mid.channel_data=channel_data;
+mid.scan=scan;
+
+mid.transmit_apodization.window=uff.window.tukey50;
+mid.transmit_apodization.f_number=1.0;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.0;
+
+% beamforming
+b_data=mid.go();
+b_data.plot();
+
+%%
+%
+% which matches the images we saw previously. 
+
+%% Reading once and for all
+%
+% It is possible to load all the data in the file into matlab memory
+% without having to access each dataset individually. It suffices to call
+% the *read* method without parameters and...
+
+vars=uff.read_object([data_path filesep filename]);
+
+%%
+%
+% ... we get all the objects in the file into a cell structure
+
+vars{1}.plot();
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

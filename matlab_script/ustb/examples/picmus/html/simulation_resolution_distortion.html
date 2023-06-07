@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PICMUS challenge: simulation, resolution-distortion test</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="simulation_resolution_distortion.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>PICMUS challenge: simulation, resolution-distortion test</h1><!--introduction--><p>This example reads (or downloads if it cannot find the data locally) a dataset used in the <a href="http://ieeexplore.ieee.org/document/7728908/">PICMUS challenge</a> and beamforms it with USTB's general beamformer. A 75 plane-wave sequence was simulated with <a href="http://field-ii.dk/">Field II</a> to estimate the beamforming method resolution and geometric distortion.</p><p>_by Alfonso Rodriguez-Molares <a href="alfonso.r.molares@ntnu.no">alfonso.r.molares@ntnu.no</a>  and Olivier Bernard <a href="olivier.bernard@insa-lyon.fr">olivier.bernard@insa-lyon.fr</a></p><pre class="language-matlab">$Last updated: 2017/09/15$
+</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Checking if the file is in the local path, and downloading otherwise</a></li><li><a href="#2">What's inside?</a></li><li><a href="#3">Plotting beamformed_data</a></li><li><a href="#4">Loading channel data &amp; scan</a></li><li><a href="#5">Beamforming</a></li><li><a href="#6">Comparing results</a></li></ul></div><h2 id="1">Checking if the file is in the local path, and downloading otherwise</h2><p>We define the local path and the url where the data is stored</p><pre class="codeinput"><span class="comment">% data location</span>
+url=<span class="string">'http://ustb.no/datasets/'</span>;      <span class="comment">% if not found data will be downloaded from here</span>
+filename=<span class="string">'PICMUS_simulation_resolution_distortion.uff'</span>;
+
+<span class="comment">% checks if the data is in your data path, and downloads it otherwise.</span>
+<span class="comment">% The defaults data path is under USTB's folder, but you can change this</span>
+<span class="comment">% by setting an environment variable with setenv(DATA_PATH,'the_path_you_want_to_use');</span>
+tools.download(filename, url, data_path);
+</pre><h2 id="2">What's inside?</h2><p>This dataset should contain the following structures: * <b>channel_data</b>, * <b>beamformed_data</b> and, * <b>scan</b></p><p>We can check it out with the <b>index</b> function</p><pre class="codeinput">display=true;
+content = uff.index([data_path filesep filename],<span class="string">'/'</span>,display);
+</pre><pre class="codeoutput">UFF: Contents of C:\Users\47456\AppData\Roaming\MathWorks\MATLAB Add-Ons\Toolboxes\USTB\data\PICMUS_simulation_resolution_distortion.uff at /
+   - /beamformed_data: beamformed_data [uff.beamformed_data] size(1,1)
+   - /channel_data: channel_data [uff.channel_data] size(1,1)
+   - /scan: scan [uff.linear_scan] size(1,1)
+</pre><h2 id="3">Plotting beamformed_data</h2><p>We can read the <b>beamformed_data</b> object and plot it</p><pre class="codeinput">b_data=uff.read_object([data_path filesep filename],<span class="string">'/beamformed_data'</span>);
+b_data.plot();
+</pre><pre class="codeoutput">UFF: reading beamformed_data [uff.beamformed_data]
+UFF: reading sequence [uff.wave] [====================] 100%
+</pre><img vspace="5" hspace="5" src="simulation_resolution_distortion_01.png" alt=""> <h2 id="4">Loading channel data &amp; scan</h2><p>The file also contain channel_data and scan. We read it so we can replicate the beamformed image in the UFF file.</p><pre class="codeinput">channel_data=uff.read_object([data_path filesep filename],<span class="string">'/channel_data'</span>);
+scan=uff.read_object([data_path filesep filename],<span class="string">'/scan'</span>);
+</pre><pre class="codeoutput">UFF: reading channel_data [uff.channel_data]
+UFF: reading sequence [uff.wave] [====================] 100%
+</pre><h2 id="5">Beamforming</h2><p>We define a beamformer, and the corresponding transmit and apodization windows, and launch it.</p><pre class="codeinput">pipe=pipeline();
+pipe.channel_data=channel_data;
+pipe.scan=scan;
+
+<span class="comment">% receive apodization</span>
+pipe.receive_apodization.window=uff.window.tukey50;
+pipe.receive_apodization.f_number=1.7;
+
+<span class="comment">% transmit apodization</span>
+pipe.transmit_apodization.window=uff.window.tukey50;
+pipe.transmit_apodization.f_number=1.7;
+
+<span class="comment">% launch beamforming</span>
+b_data_new=pipe.go({midprocess.das postprocess.coherent_compounding});
+</pre><pre class="codeoutput">USTB General beamformer MEX v1.1.2 .............done!
+</pre><h2 id="6">Comparing results</h2><p>We plot both images side by side.</p><pre class="codeinput">figure;
+b_data.plot(subplot(1,2,1),<span class="string">'Original'</span>);
+b_data_new.plot(subplot(1,2,2),<span class="string">'New'</span>);
+set(gcf,<span class="string">'Position'</span>,[100   100   750   450])
+</pre><img vspace="5" hspace="5" src="simulation_resolution_distortion_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% PICMUS challenge: simulation, resolution-distortion test
+%
+% This example reads (or downloads if it cannot find the data locally) a 
+% dataset used in the <http://ieeexplore.ieee.org/document/7728908/ PICMUS challenge>
+% and beamforms it with USTB's general beamformer.
+% A 75 plane-wave sequence was simulated with <http://field-ii.dk/ Field
+% II> to estimate the beamforming method resolution and geometric
+% distortion. 
+%
+% _by Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no> 
+%  and Olivier Bernard <olivier.bernard@insa-lyon.fr>
+%
+%   $Last updated: 2017/09/15$
+
+%% Checking if the file is in the local path, and downloading otherwise
+%
+% We define the local path and the url where the data is stored
+
+% data location
+url='http://ustb.no/datasets/';      % if not found data will be downloaded from here
+filename='PICMUS_simulation_resolution_distortion.uff';
+
+% checks if the data is in your data path, and downloads it otherwise.
+% The defaults data path is under USTB's folder, but you can change this
+% by setting an environment variable with setenv(DATA_PATH,'the_path_you_want_to_use');
+tools.download(filename, url, data_path);   
+
+%% What's inside?
+%
+% This dataset should contain the following structures:
+% * *channel_data*,
+% * *beamformed_data* and,
+% * *scan*
+%
+% We can check it out with the *index* function
+display=true;
+content = uff.index([data_path filesep filename],'/',display);
+
+%% Plotting beamformed_data
+%
+% We can read the *beamformed_data* object and plot it 
+
+b_data=uff.read_object([data_path filesep filename],'/beamformed_data');
+b_data.plot();
+
+%% Loading channel data & scan
+%
+% The file also contain channel_data and scan. We read it so we can
+% replicate the beamformed image in the UFF file.
+
+channel_data=uff.read_object([data_path filesep filename],'/channel_data');
+scan=uff.read_object([data_path filesep filename],'/scan');
+
+%% Beamforming
+%
+% We define a beamformer, and the corresponding transmit and apodization
+% windows, and launch it.
+
+pipe=pipeline();
+pipe.channel_data=channel_data;
+pipe.scan=scan;
+    
+% receive apodization
+pipe.receive_apodization.window=uff.window.tukey50;
+pipe.receive_apodization.f_number=1.7;
+
+% transmit apodization
+pipe.transmit_apodization.window=uff.window.tukey50;
+pipe.transmit_apodization.f_number=1.7;
+
+% launch beamforming
+b_data_new=pipe.go({midprocess.das postprocess.coherent_compounding});
+
+%% Comparing results
+%
+% We plot both images side by side.
+
+figure;
+b_data.plot(subplot(1,2,1),'Original');
+b_data_new.plot(subplot(1,2,2),'New');
+set(gcf,'Position',[100   100   750   450])
+
+##### SOURCE END #####
+--></body></html>

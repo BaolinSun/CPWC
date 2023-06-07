@@ -1,0 +1,318 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>FI simulation with a moving point scatterer on a phased array with the USTB built-in Fresnel simulator</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="FI_phased_array_multiframe.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>FI simulation with a moving point scatterer on a phased array with the USTB built-in Fresnel simulator</h1><!--introduction--><p>In this example we show how to use the built-in fresnel simulator in USTB to generate a Conventional Focused Imaging (single focal depth) dataset for a phased array and a sector scan and how it can be beamformed with USTB. Specifically, in this example, a point scatterer under study moves between acquired frames.</p><p>This tutorial assumes familiarity with the contents of the <a href="../../linear_array/html/CPWC_linear_array.html">'CPWC simulation with the USTB built-in Fresnel simulator'</a> tutorial. Please feel free to refer back to that for more details.</p><p><i>by Alfonso Rodriguez-Molares <a href="alfonso.r.molares@ntnu.no">alfonso.r.molares@ntnu.no</a>, Ole Marius Hoel Rindal <a href="olemarius@olemarius.net">olemarius@olemarius.net</a> and Arun Asokan Nair <a href="anair8@jhu.edu">anair8@jhu.edu</a> 11.03.2017</i></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Phantom</a></li><li><a href="#3">Probe</a></li><li><a href="#4">Pulse</a></li><li><a href="#5">Sequence generation</a></li><li><a href="#6">The Fresnel simulator</a></li><li><a href="#7">Scan</a></li><li><a href="#8">Midprocess</a></li><li><a href="#9">Plotting the data</a></li></ul></div><p>Clear the memory of any lingering settings and data, and close all previously opened plots.</p><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+</pre><h2 id="2">Phantom</h2><p>The <b>fresnel</b> simulator takes a <b>phantom</b> structure as input. <b>phantom</b> is an Ultrasound File Format (UFF) structure that contains the position of a of a point scatterer(s). USTB's implementation of phantom includes a <b>plot</b> method Below, we only deal with a single point scatterer. We can change N_sca to have multiple point scatterers, and have to add the appropriate additional information below.</p><pre class="codeinput">N_sca=1;                            <span class="comment">% number of scatterers</span>
+x_sca=-20e-3;                       <span class="comment">% azimuthal position of scatterer(s) [m]</span>
+z_sca=30e-3;                        <span class="comment">% axial position of scatterer(s) [m]</span>
+p=[x_sca zeros(N_sca,1) z_sca];     <span class="comment">% matrix of scatterer position vectors</span>
+N_frames=5;                         <span class="comment">% number of frames</span>
+N_beams=128;                        <span class="comment">% number of focused beams</span>
+alpha=35*pi/180;                    <span class="comment">% scatterer direction [rad]</span>
+v_mag=0.25;                         <span class="comment">% scatterer velocity magnitude [m/s]</span>
+v=v_mag*ones(N_sca,1)*[cos(alpha) 0 sin(alpha)]; <span class="comment">% scatterer velocity [m/s m/s m/s]</span>
+PRF=4000;                           <span class="comment">% pulse repetition frequency [Hz]</span>
+fig_handle=figure();
+<span class="keyword">for</span> n=1:N_frames*N_beams
+    pha(n)=uff.phantom();
+    pha(n).sound_speed=1540;            <span class="comment">% speed of sound [m/s]</span>
+    pha(n).points=[p+v*(n-1)/PRF, ones(N_sca,1)];    <span class="comment">% point scatterer position [m]</span>
+    pha(n).plot(fig_handle);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="FI_phased_array_multiframe_01.png" alt=""> <h2 id="3">Probe</h2><p>The next UFF structure we look at is <b>probe</b>. It contains information about the probe's geometry. USTB's implementation of <b>probe</b> comes with a <b>plot</b> method too. When combined with the previous figure we can see the position of the probe respect to the phantom.</p><pre class="codeinput">prb=uff.linear_array();
+prb.N=64;                   <span class="comment">% number of elements</span>
+prb.pitch=300e-6;           <span class="comment">% probe pitch in azimuth [m]</span>
+prb.element_width=270e-6;   <span class="comment">% element width [m]</span>
+prb.element_height=7000e-6; <span class="comment">% element height [m]</span>
+prb.plot(fig_handle);
+</pre><img vspace="5" hspace="5" src="FI_phased_array_multiframe_02.png" alt=""> <h2 id="4">Pulse</h2><p>We then define the pulse-echo signal which is done here using the <b>fresnel</b> simulator's <b>pulse</b> structure. We could also use <a href="http://field-ii.dk/">'Field II'</a> for a more accurate model.</p><pre class="codeinput">pul=uff.pulse();
+pul.center_frequency=3e6;       <span class="comment">% transducer frequency [MHz]</span>
+pul.fractional_bandwidth=0.6;   <span class="comment">% fractional bandwidth [unitless]</span>
+pul.plot([],<span class="string">'2-way pulse'</span>);
+</pre><img vspace="5" hspace="5" src="FI_phased_array_multiframe_03.png" alt=""> <h2 id="5">Sequence generation</h2><p>Now, we shall generate our sequence! Keep in mind that the <b>fresnel</b> simulator takes the same sequence definition as the USTB beamformer. In UFF and USTB a sequence is defined as a collection of <b>wave</b> structures.</p><p>For our example here, we define a sequence of 128 (= N_beams) focused beams spanning an azimuthal angular range of <img src="FI_phased_array_multiframe_eq10357469457311710108.png" alt="$[-\frac{35\pi}{180},\frac{35\pi}{180} ]$"> radians. The focal depth is set as 40 mm. The <b>wave</b> structure too has a <b>plot</b> method.</p><pre class="codeinput">azimuth_axis=linspace(-35*pi/180,35*pi/180,N_beams).';  <span class="comment">% beam angle vector [rad]</span>
+depth=40e-3;                                            <span class="comment">% fixed focal depth [m]</span>
+seq=uff.wave();
+<span class="keyword">for</span> n=1:N_beams
+    seq(n)=uff.wave();
+    seq(n).probe=prb;
+
+    seq(n).source=uff.point();
+    seq(n).source.azimuth=azimuth_axis(n);
+    seq(n).source.distance=depth;
+
+    seq(n).apodization=uff.apodization();
+    seq(n).apodization.window=uff.window.tukey50;
+    seq(n).apodization.f_number=1.7;
+    seq(n).apodization.focus=uff.sector_scan(<span class="string">'xyz'</span>,seq(n).source.xyz);
+
+    seq(n).sound_speed=pha.sound_speed;
+
+    <span class="comment">% show source</span>
+    fig_handle=seq(n).source.plot(fig_handle);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="FI_phased_array_multiframe_04.png" alt=""> <h2 id="6">The Fresnel simulator</h2><p>Finally, we launch the built-in simulator. The simulator takes in a <b>phantom</b>, <b>pulse</b>, <b>probe</b> and a sequence of <b>wave</b> structures along with the desired sampling frequency, and returns a <b>channel_data</b> UFF structure.</p><pre class="codeinput">sim=fresnel();
+
+<span class="comment">% setting input data</span>
+sim.phantom=pha;                <span class="comment">% phantom</span>
+sim.pulse=pul;                  <span class="comment">% transmitted pulse</span>
+sim.probe=prb;                  <span class="comment">% probe</span>
+sim.sequence=seq;               <span class="comment">% beam sequence</span>
+sim.sampling_frequency=41.6e6;  <span class="comment">% sampling frequency [Hz]</span>
+
+<span class="comment">% we launch the simulation</span>
+channel_data=sim.go();
+</pre><pre class="codeoutput">USTB's Fresnel impulse response simulator (v1.0.7)
+---------------------------------------------------------------
+</pre><h2 id="7">Scan</h2><p>The scan area is defines as a collection of pixels spanning our region of interest. For our example here, we use the <b>sector_scan</b> structure to generate a sector scan. <b>scan</b> too has a useful <b>plot</b> method it can call.</p><pre class="codeinput">depth_axis=linspace(5e-3,80e-3,256).';
+scan=uff.sector_scan(<span class="string">'azimuth_axis'</span>,azimuth_axis,<span class="string">'depth_axis'</span>,depth_axis);
+</pre><h2 id="8">Midprocess</h2><p>With <b>channel_data</b> and a <b>scan</b> we have all we need to produce an ultrasound image. We now use a USTB structure <b>midprocess</b>, that takes an <b>apodization</b> structure in addition to the <b>channel_data</b> and <b>scan</b>, and returns a <b>beamformed_data</b>.</p><pre class="codeinput">mid=midprocess.das();
+mid.channel_data=channel_data;
+mid.scan=scan;
+mid.dimension = dimension.both();
+
+mid.transmit_apodization.window = uff.window.scanline;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.7;
+
+
+b_data=mid.go();
+</pre><pre class="codeoutput">USTB General beamformer MEX v1.1.2 .............done!
+</pre><h2 id="9">Plotting the data</h2><p>The below <b>plot</b> method shows an interactive window in which we can play the multiple frames as a movie.</p><pre class="codeinput">b_data.plot();
+</pre><img vspace="5" hspace="5" src="FI_phased_array_multiframe_05.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% FI simulation with a moving point scatterer on a phased array with the USTB built-in Fresnel simulator
+%
+% In this example we show how to use the built-in fresnel simulator in USTB
+% to generate a Conventional Focused Imaging (single focal depth) dataset 
+% for a phased array and a sector scan and how it can be beamformed with USTB.
+% Specifically, in this example, a point scatterer under study moves 
+% between acquired frames.
+%
+% This tutorial assumes familiarity with the contents of the 
+% <../../linear_array/html/CPWC_linear_array.html 'CPWC simulation with the 
+% USTB built-in Fresnel simulator'> tutorial. Please feel free to refer 
+% back to that for more details.
+% 
+% _by Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no>, 
+% Ole Marius Hoel Rindal <olemarius@olemarius.net> and Arun Asokan Nair
+% <anair8@jhu.edu> 11.03.2017_
+
+%%
+% 
+% Clear the memory of any lingering settings and data, and close all 
+% previously opened plots.
+
+clear all;
+close all;
+
+%% Phantom
+%
+% The *fresnel* simulator takes a *phantom* structure as input. *phantom* is 
+% an Ultrasound File Format (UFF) structure that contains the position of a 
+% of a point scatterer(s). USTB's implementation of phantom includes
+% a *plot* method
+% Below, we only deal with a single point scatterer. We can change N_sca to
+% have multiple point scatterers, and have to add the appropriate 
+% additional information below.
+
+N_sca=1;                            % number of scatterers
+x_sca=-20e-3;                       % azimuthal position of scatterer(s) [m]
+z_sca=30e-3;                        % axial position of scatterer(s) [m]
+p=[x_sca zeros(N_sca,1) z_sca];     % matrix of scatterer position vectors
+N_frames=5;                         % number of frames
+N_beams=128;                        % number of focused beams
+alpha=35*pi/180;                    % scatterer direction [rad]
+v_mag=0.25;                         % scatterer velocity magnitude [m/s]
+v=v_mag*ones(N_sca,1)*[cos(alpha) 0 sin(alpha)]; % scatterer velocity [m/s m/s m/s]
+PRF=4000;                           % pulse repetition frequency [Hz]
+fig_handle=figure();
+for n=1:N_frames*N_beams
+    pha(n)=uff.phantom();
+    pha(n).sound_speed=1540;            % speed of sound [m/s]
+    pha(n).points=[p+v*(n-1)/PRF, ones(N_sca,1)];    % point scatterer position [m]
+    pha(n).plot(fig_handle);             
+end
+
+%% Probe
+%
+% The next UFF structure we look at is *probe*. It contains information 
+% about the probe's geometry. USTB's implementation of *probe* comes with a 
+% *plot* method too. When combined with the previous figure we can see the
+% position of the probe respect to the phantom.
+
+prb=uff.linear_array();
+prb.N=64;                   % number of elements 
+prb.pitch=300e-6;           % probe pitch in azimuth [m]
+prb.element_width=270e-6;   % element width [m]
+prb.element_height=7000e-6; % element height [m]
+prb.plot(fig_handle);
+
+%% Pulse
+% 
+% We then define the pulse-echo signal which is done here using the 
+% *fresnel* simulator's *pulse* structure. We could also use 
+% <http://field-ii.dk/ 'Field II'> for a more accurate model.
+
+pul=uff.pulse();
+pul.center_frequency=3e6;       % transducer frequency [MHz]
+pul.fractional_bandwidth=0.6;   % fractional bandwidth [unitless]
+pul.plot([],'2-way pulse');
+
+%% Sequence generation
+%
+% Now, we shall generate our sequence! Keep in mind that the *fresnel* simulator
+% takes the same sequence definition as the USTB beamformer. In UFF and
+% USTB a sequence is defined as a collection of *wave* structures. 
+% 
+% For our example here, we define a sequence of 128 (= N_beams) focused beams 
+% spanning an azimuthal angular range of 
+% $[-\frac{35\pi}{180},\frac{35\pi}{180} ]$ radians. The focal depth is 
+% set as 40 mm. The *wave* structure too has a *plot* method.
+
+azimuth_axis=linspace(-35*pi/180,35*pi/180,N_beams).';  % beam angle vector [rad]
+depth=40e-3;                                            % fixed focal depth [m]
+seq=uff.wave();
+for n=1:N_beams
+    seq(n)=uff.wave();
+    seq(n).probe=prb;
+    
+    seq(n).source=uff.point();
+    seq(n).source.azimuth=azimuth_axis(n);
+    seq(n).source.distance=depth;
+    
+    seq(n).apodization=uff.apodization();
+    seq(n).apodization.window=uff.window.tukey50;
+    seq(n).apodization.f_number=1.7;
+    seq(n).apodization.focus=uff.sector_scan('xyz',seq(n).source.xyz);
+    
+    seq(n).sound_speed=pha.sound_speed;
+    
+    % show source
+    fig_handle=seq(n).source.plot(fig_handle);
+end
+
+%% The Fresnel simulator
+%
+% Finally, we launch the built-in simulator. The simulator takes in a
+% *phantom*, *pulse*, *probe* and a sequence of *wave* structures along 
+% with the desired sampling frequency, and returns a *channel_data* UFF 
+% structure.
+
+sim=fresnel();
+
+% setting input data 
+sim.phantom=pha;                % phantom
+sim.pulse=pul;                  % transmitted pulse
+sim.probe=prb;                  % probe
+sim.sequence=seq;               % beam sequence
+sim.sampling_frequency=41.6e6;  % sampling frequency [Hz]
+
+% we launch the simulation
+channel_data=sim.go();
+ 
+%% Scan
+%
+% The scan area is defines as a collection of pixels spanning our region of 
+% interest. For our example here, we use the *sector_scan* structure to 
+% generate a sector scan. *scan* too has a useful *plot* method it can call.
+
+depth_axis=linspace(5e-3,80e-3,256).';
+scan=uff.sector_scan('azimuth_axis',azimuth_axis,'depth_axis',depth_axis);
+ 
+ 
+%% Midprocess
+%
+% With *channel_data* and a *scan* we have all we need to produce an
+% ultrasound image. We now use a USTB structure *midprocess*, that takes an
+% *apodization* structure in addition to the *channel_data* and *scan*, and 
+% returns a *beamformed_data*.
+
+mid=midprocess.das();
+mid.channel_data=channel_data;
+mid.scan=scan;
+mid.dimension = dimension.both();
+
+mid.transmit_apodization.window = uff.window.scanline;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.7;
+
+
+b_data=mid.go();
+
+%% Plotting the data
+%
+% The below *plot* method shows an interactive window in which we can
+% play the multiple frames as a movie.
+
+b_data.plot();
+##### SOURCE END #####
+--></body></html>

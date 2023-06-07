@@ -1,0 +1,11 @@
+.vscode
+**/__pycache__
+logs/
+results/
+temps/
+checkpoints/
+some/
+run/
+bak/
+dataset/
+example/

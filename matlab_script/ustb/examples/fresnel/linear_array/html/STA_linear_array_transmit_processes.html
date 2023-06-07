@@ -1,0 +1,303 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>STA_linear_array_transmit_processes</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="STA_linear_array_transmit_processes.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">PHANTOM</a></li><li><a href="#3">PROBE</a></li><li><a href="#4">PULSE</a></li><li><a href="#5">SEQUENCE GENERATION</a></li><li><a href="#6">SIMULATOR</a></li><li><a href="#7">SCAN</a></li><li><a href="#8">PIPELINE</a></li><li><a href="#9">coherently compounded</a></li><li><a href="#10">incoherently compounded</a></li><li><a href="#11">max</a></li><li><a href="#12">Mallart-Fink coherence factor</a></li><li><a href="#13">Camacho-Fritsch phase coherence factor</a></li></ul></div><pre class="codeinput"><span class="comment">% Using transmmit processes with a STA dataset and the USTB built-in Fresnel simulator</span>
+
+<span class="comment">%   authors: Alfonso Rodriguez-Molares (alfonso.r.molares@ntnu.no)</span>
+
+
+clear <span class="string">all</span>;
+close <span class="string">all</span>;
+</pre><h2 id="2">PHANTOM</h2><pre class="codeinput">pha=uff.phantom();
+pha.sound_speed=1540;            <span class="comment">% speed of sound [m/s]</span>
+pha.points=[0,  0, 40e-3, 1];    <span class="comment">% point scatterer position [m]</span>
+fig_handle=pha.plot();
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_01.png" alt=""> <h2 id="3">PROBE</h2><pre class="codeinput">prb=uff.linear_array();
+prb.N=128;                  <span class="comment">% number of elements</span>
+prb.pitch=300e-6;           <span class="comment">% probe pitch in azimuth [m]</span>
+prb.element_width=270e-6;   <span class="comment">% element width [m]</span>
+prb.element_height=5000e-6; <span class="comment">% element height [m]</span>
+prb.plot(fig_handle);
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_02.png" alt=""> <h2 id="4">PULSE</h2><pre class="codeinput">pul=uff.pulse();
+pul.center_frequency=5.2e6;       <span class="comment">% transducer frequency [MHz]</span>
+pul.fractional_bandwidth=0.6;     <span class="comment">% fractional bandwidth [unitless]</span>
+pul.plot([],<span class="string">'2-way pulse'</span>);
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_03.png" alt=""> <h2 id="5">SEQUENCE GENERATION</h2><pre class="codeinput">N=128;                      <span class="comment">% number of waves</span>
+seq=uff.wave();
+<span class="keyword">for</span> n=1:N
+    seq(n)=uff.wave();
+    seq(n).probe=prb;
+    seq(n).source.xyz=[prb.x(n) prb.y(n) prb.z(n)];
+
+    seq(n).apodization=uff.apodization();
+    seq(n).apodization.window=uff.window.sta;
+    seq(n).apodization.origin=seq(n).source;
+
+    seq(n).sound_speed=pha.sound_speed;
+
+    <span class="comment">% show source</span>
+    fig_handle=seq(n).source.plot(fig_handle);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_04.png" alt=""> <h2 id="6">SIMULATOR</h2><pre class="codeinput">sim=fresnel();
+
+<span class="comment">% setting input data</span>
+sim.phantom=pha;                <span class="comment">% phantom</span>
+sim.pulse=pul;                  <span class="comment">% transmitted pulse</span>
+sim.probe=prb;                  <span class="comment">% probe</span>
+sim.sequence=seq;               <span class="comment">% beam sequence</span>
+sim.sampling_frequency=41.6e6;  <span class="comment">% sampling frequency [Hz]</span>
+
+<span class="comment">% we launch the simulation</span>
+channel_data=sim.go();
+</pre><pre class="codeoutput">USTB's Fresnel impulse response simulator (v1.0.7)
+---------------------------------------------------------------
+</pre><h2 id="7">SCAN</h2><pre class="codeinput">scan=uff.linear_scan(<span class="string">'x_axis'</span>,linspace(-2e-3,2e-3,200).', <span class="string">'z_axis'</span>,linspace(39e-3,41e-3,100).');
+scan.plot(fig_handle,<span class="string">'Scenario'</span>);    <span class="comment">% show mesh</span>
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_05.png" alt=""> <h2 id="8">PIPELINE</h2><pre class="codeinput">pipe=pipeline();
+pipe.channel_data=channel_data;
+pipe.scan=scan;
+
+pipe.transmit_apodization.window=uff.window.tukey50;
+pipe.transmit_apodization.f_number=1.7;
+
+pipe.receive_apodization.window=uff.window.tukey50;
+pipe.receive_apodization.f_number=1.7;
+
+<span class="comment">% beamforming</span>
+pre = preprocess.demodulation();
+
+mid = midprocess.das();
+mid.dimension = dimension.receive();
+
+b_data=pipe.go({pre mid});
+</pre><pre class="codeoutput">Warning: The modulation frequency is not specified. The estimated central
+frequency will be used.  
+Estimating power spectrum
+Warning: The downsampling frequency is not specified. Using 2 *
+modulation_frequency. 
+Warning: The input sample frequency is not a multiple of the specified
+downsample frequency. Rounding up the downsample frequency to the next higher
+downsample frequency. 
+Band-pass filtering
+Low-pass filtering
+USTB General beamformer MEX v1.1.2 .............done!
+</pre><h2 id="9">coherently compounded</h2><pre class="codeinput">cc=postprocess.coherent_compounding();
+cc.input=b_data;
+cc_data=cc.go();
+cc_data.plot([],cc.name);
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_06.png" alt=""> <h2 id="10">incoherently compounded</h2><pre class="codeinput">ic=postprocess.incoherent_compounding();
+ic.input=b_data;
+ic_data=ic.go();
+ic_data.plot([],ic.name);
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_07.png" alt=""> <h2 id="11">max</h2><pre class="codeinput">mv=postprocess.max();
+mv.input=b_data;
+mv_data=mv.go();
+mv_data.plot([],mv.name);
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_08.png" alt=""> <h2 id="12">Mallart-Fink coherence factor</h2><pre class="codeinput">cf=postprocess.coherence_factor();
+cf.transmit_apodization=pipe.transmit_apodization;
+cf.receive_apodization=pipe.receive_apodization;
+cf.dimension = dimension.transmit;
+cf.input=b_data;
+cf_data=cf.go();
+cf.CF.plot([],<span class="string">'Mallart-Fink Coherence factor'</span>,60,<span class="string">'none'</span>); <span class="comment">% show the coherence factor</span>
+cf_data.plot([],cf.name);
+</pre><pre class="codeoutput">uff.apodization: Inputs and outputs are unchanged. Skipping process.
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_09.png" alt=""> <img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_10.png" alt=""> <h2 id="13">Camacho-Fritsch phase coherence factor</h2><pre class="codeinput">pcf=postprocess.phase_coherence_factor();
+pcf.dimension = dimension.transmit;
+pcf.transmit_apodization=pipe.transmit_apodization;
+pcf.receive_apodization=pipe.receive_apodization;
+pcf.input=b_data;
+pcf_data=pcf.go();
+pcf.FCC.plot([],<span class="string">'Camacho-Fritsch Phase coherence factor'</span>,60,<span class="string">'none'</span>); <span class="comment">% show the phase coherence factor</span>
+pcf_data.plot([],pcf.name);
+</pre><pre class="codeoutput">uff.apodization: Inputs and outputs are unchanged. Skipping process.
+</pre><img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_11.png" alt=""> <img vspace="5" hspace="5" src="STA_linear_array_transmit_processes_12.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Using transmmit processes with a STA dataset and the USTB built-in Fresnel simulator
+
+%   authors: Alfonso Rodriguez-Molares (alfonso.r.molares@ntnu.no)
+%   $Date: 2017/05/01$
+
+clear all;
+close all;
+
+%% PHANTOM
+pha=uff.phantom();
+pha.sound_speed=1540;            % speed of sound [m/s]
+pha.points=[0,  0, 40e-3, 1];    % point scatterer position [m]
+fig_handle=pha.plot();             
+             
+%% PROBE
+prb=uff.linear_array();
+prb.N=128;                  % number of elements 
+prb.pitch=300e-6;           % probe pitch in azimuth [m]
+prb.element_width=270e-6;   % element width [m]
+prb.element_height=5000e-6; % element height [m]
+prb.plot(fig_handle);
+
+%% PULSE
+pul=uff.pulse();
+pul.center_frequency=5.2e6;       % transducer frequency [MHz]
+pul.fractional_bandwidth=0.6;     % fractional bandwidth [unitless]
+pul.plot([],'2-way pulse');
+
+%% SEQUENCE GENERATION
+N=128;                      % number of waves
+seq=uff.wave();
+for n=1:N 
+    seq(n)=uff.wave();
+    seq(n).probe=prb;
+    seq(n).source.xyz=[prb.x(n) prb.y(n) prb.z(n)];
+    
+    seq(n).apodization=uff.apodization();
+    seq(n).apodization.window=uff.window.sta;
+    seq(n).apodization.origin=seq(n).source;
+    
+    seq(n).sound_speed=pha.sound_speed;
+    
+    % show source
+    fig_handle=seq(n).source.plot(fig_handle);
+end
+
+%% SIMULATOR
+sim=fresnel();
+
+% setting input data 
+sim.phantom=pha;                % phantom
+sim.pulse=pul;                  % transmitted pulse
+sim.probe=prb;                  % probe
+sim.sequence=seq;               % beam sequence
+sim.sampling_frequency=41.6e6;  % sampling frequency [Hz]
+
+% we launch the simulation
+channel_data=sim.go();
+
+%% SCAN
+scan=uff.linear_scan('x_axis',linspace(-2e-3,2e-3,200).', 'z_axis',linspace(39e-3,41e-3,100).');
+scan.plot(fig_handle,'Scenario');    % show mesh
+
+%% PIPELINE
+pipe=pipeline();
+pipe.channel_data=channel_data;
+pipe.scan=scan;
+
+pipe.transmit_apodization.window=uff.window.tukey50;
+pipe.transmit_apodization.f_number=1.7;
+
+pipe.receive_apodization.window=uff.window.tukey50;
+pipe.receive_apodization.f_number=1.7;
+
+% beamforming
+pre = preprocess.demodulation();
+
+mid = midprocess.das();
+mid.dimension = dimension.receive();
+
+b_data=pipe.go({pre mid});
+
+%% coherently compounded
+cc=postprocess.coherent_compounding();
+cc.input=b_data;
+cc_data=cc.go();
+cc_data.plot([],cc.name);
+
+%% incoherently compounded
+ic=postprocess.incoherent_compounding();
+ic.input=b_data;
+ic_data=ic.go();
+ic_data.plot([],ic.name);
+
+%% max
+mv=postprocess.max();
+mv.input=b_data;
+mv_data=mv.go();
+mv_data.plot([],mv.name);
+
+%% Mallart-Fink coherence factor
+cf=postprocess.coherence_factor();
+cf.transmit_apodization=pipe.transmit_apodization;
+cf.receive_apodization=pipe.receive_apodization;
+cf.dimension = dimension.transmit;
+cf.input=b_data;
+cf_data=cf.go();
+cf.CF.plot([],'Mallart-Fink Coherence factor',60,'none'); % show the coherence factor
+cf_data.plot([],cf.name);
+
+%% Camacho-Fritsch phase coherence factor
+pcf=postprocess.phase_coherence_factor();
+pcf.dimension = dimension.transmit;
+pcf.transmit_apodization=pipe.transmit_apodization;
+pcf.receive_apodization=pipe.receive_apodization;
+pcf.input=b_data;
+pcf_data=pcf.go();
+pcf.FCC.plot([],'Camacho-Fritsch Phase coherence factor',60,'none'); % show the phase coherence factor
+pcf_data.plot([],pcf.name);
+
+##### SOURCE END #####
+--></body></html>

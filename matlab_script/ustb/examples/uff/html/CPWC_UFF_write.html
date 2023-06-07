@@ -1,0 +1,361 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Writting data to a UFF file</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-08-02"><meta name="DC.source" content="CPWC_UFF_write.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Writting data to a UFF file</h1><!--introduction--><p>In this example we show how to write channel and beamformed data into a UFF (Ultrasound File Format) file. The handling couldn't be simpler so this is going to be brief.</p><p><i>by Alfonso Rodriguez-Molares <a href="alfonso.r.molares@ntnu.no">alfonso.r.molares@ntnu.no</a> 29.10.2018</i></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Getting channel data</a></li><li><a href="#2">Getting beamformed data</a></li><li><a href="#3">Saving beamformed data</a></li><li><a href="#9">Saving channel data</a></li></ul></div><h2 id="1">Getting channel data</h2><p>The first thing we need to save data into a UFF file is, you guessed it, data. Let us generate some channel data using the <b>fresnel</b> simulator included in the USTB. We won't get into details here. If you want to know more about <b>fresnel</b> you can find some examples under the <i>fresnel</i> folder.</p><p>So here we define a 15 angles plane-wave sequence using a 128 elements linear array and a 5.2 MHz pulse. The phantom is a cross of point scatterers.</p><pre class="codeinput"><span class="comment">% phantom</span>
+x_sca=[zeros(1,7) -15e-3:5e-3:15e-3];
+z_sca=[5e-3:5e-3:35e-3 20e-3*ones(1,7)];
+N_sca=length(x_sca);
+pha=uff.phantom();
+pha.sound_speed=1540;            <span class="comment">% speed of sound [m/s]</span>
+pha.points=[x_sca.', zeros(N_sca,1), z_sca.', ones(N_sca,1)];    <span class="comment">% point scatterer position [m]</span>
+
+<span class="comment">% probe</span>
+prb=uff.linear_array();
+prb.N=128;                  <span class="comment">% number of elements</span>
+prb.pitch=300e-6;           <span class="comment">% probe pitch in azimuth [m]</span>
+prb.element_width=270e-6;   <span class="comment">% element width [m]</span>
+prb.element_height=5000e-6; <span class="comment">% element height [m]</span>
+
+<span class="comment">% pulse</span>
+pul=uff.pulse();
+pul.center_frequency=5.2e6;       <span class="comment">% transducer frequency [MHz]</span>
+pul.fractional_bandwidth=0.6;     <span class="comment">% fractional bandwidth [unitless]</span>
+
+<span class="comment">% sequence</span>
+N=31;                           <span class="comment">% number of plane waves</span>
+angles=linspace(-0.3,0.3,N);    <span class="comment">% angle vector [rad]</span>
+seq=uff.wave();
+<span class="keyword">for</span> n=1:N
+    seq(n)=uff.wave();
+    seq(n).source.azimuth=angles(n);
+    seq(n).source.distance=Inf;
+    seq(n).probe=prb;
+    seq(n).sound_speed=pha.sound_speed;
+<span class="keyword">end</span>
+
+<span class="comment">% simulator</span>
+sim=fresnel();
+
+<span class="comment">% setting input data</span>
+sim.phantom=pha;                <span class="comment">% phantom</span>
+sim.pulse=pul;                  <span class="comment">% transmitted pulse</span>
+sim.probe=prb;                  <span class="comment">% probe</span>
+sim.sequence=seq;               <span class="comment">% beam sequence</span>
+sim.sampling_frequency=41.6e6;  <span class="comment">% sampling frequency [Hz]</span>
+
+<span class="comment">% launch the simulation</span>
+channel_data=sim.go();
+
+<span class="comment">% setting dataset name &amp; author information</span>
+channel_data.name = <span class="string">'Test for UFF example'</span>;
+channel_data.author = {<span class="string">'Alfonso Rodriguez-Molares &lt;alfonso.r.molares@ntnu.no&gt;'</span>};
+channel_data.reference = {<span class="string">'www.ustb.no'</span>};
+</pre><pre class="codeoutput">USTB's Fresnel impulse response simulator (v1.0.7)
+---------------------------------------------------------------
+</pre><h2 id="2">Getting beamformed data</h2><p>We will also generate some beamformed data to save into the same UFF file. To do that we define a scanning grid, a beamformer, and we set it to run.</p><pre class="codeinput"><span class="comment">% scan</span>
+scan=uff.linear_scan(<span class="string">'x_axis'</span>,linspace(-20e-3,20e-3,256).', <span class="string">'z_axis'</span>, linspace(0e-3,40e-3,256).');
+
+<span class="comment">% pipeline</span>
+mid=midprocess.das();
+mid.dimension = dimension.both;
+
+mid.channel_data=channel_data;
+mid.scan=scan;
+
+mid.transmit_apodization.window=uff.window.tukey50;
+mid.transmit_apodization.f_number=1.0;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.0;
+
+<span class="comment">% beamforming</span>
+b_data=mid.go();
+b_data.plot();
+</pre><pre class="codeoutput">USTB General beamformer MEX v1.1.2 .............done!
+</pre><img vspace="5" hspace="5" src="CPWC_UFF_write_01.png" alt=""> <h2 id="3">Saving beamformed data</h2><p>It's about time we start saving some data. To do so we use the method <b>write</b> of the <b>uff</b> class. To do we just have to pass the path to the <b>uff</b> file to the <b>write</b> method of any uff class.</p><pre class="codeinput">filename = [data_path() filesep <span class="string">'test03.uff'</span>];
+b_data.write(filename);
+</pre><pre class="codeoutput">Time out! b_data not written
+</pre><p>Now the beamformed data has been saved into the file. You can check the contents of the file with a HDF5 viewer such as</p><p><a href="https://support.hdfgroup.org/products/java/release/download.html">HDFView</a></p><p>But the UFF packet provides a function that list the contents of a UFF file: the <b>index</b> function.</p><pre class="codeinput">display=true;
+index=uff.index(filename,<span class="string">'/'</span>,display);
+</pre><pre class="codeoutput">UFF: Contents of C:\Users\47456\AppData\Roaming\MathWorks\MATLAB Add-Ons\Toolboxes\USTB\data\test03.uff at /
+   - /b_data: b_data [uff.beamformed_data] size(1,1)
+   - /b_data_copy: b_data_copy [uff.beamformed_data] size(1,1)
+   - /channel_data: channel_data [uff.channel_data] size(1,1)
+</pre><p><b>uff/index</b> returns a cell with information on the datasets and groups in the specified location, see:</p><pre class="codeinput">index{:}
+</pre><pre class="codeoutput">
+ans = 
+
+  struct with fields:
+
+    location: '/b_data'
+        name: 'b_data'
+       class: 'uff.beamformed_data'
+        size: [2&times;1 double]
+
+
+ans = 
+
+  struct with fields:
+
+    location: '/b_data_copy'
+        name: 'b_data_copy'
+       class: 'uff.beamformed_data'
+        size: [2&times;1 double]
+
+
+ans = 
+
+  struct with fields:
+
+    location: '/channel_data'
+        name: 'channel_data'
+       class: 'uff.channel_data'
+        size: [2&times;1 double]
+
+</pre><p>If the flag <b>display</b> is set then the function displays that information on screen. <b>uff/index</b> is not recursive: it only shows the contents of the specified location. Notice that name of the dataset inside the UFF file matches the object's name in MATLAB's workspace</p><p>If we try saving the data again then ...</p><pre class="codeinput">b_data.write(filename);
+</pre><pre class="codeoutput">Time out! b_data not written
+</pre><p>... a dialog will open asking if we want to overwrite the dataset. This dialog has a timeout of 5 seconds. If you're not quick it will not overwrite the data. Of course to avoid overwritting we can change the name of the dataset within the <b>uff</b> file by</p><pre class="codeinput">b_data.write(filename,<span class="string">'b_data_copy'</span>);
+uff.index(filename,<span class="string">'/'</span>,display);
+</pre><pre class="codeoutput">Time out! b_data_copy not written
+UFF: Contents of C:\Users\47456\AppData\Roaming\MathWorks\MATLAB Add-Ons\Toolboxes\USTB\data\test03.uff at /
+   - /b_data: b_data [uff.beamformed_data] size(1,1)
+   - /b_data_copy: b_data_copy [uff.beamformed_data] size(1,1)
+   - /channel_data: channel_data [uff.channel_data] size(1,1)
+</pre><h2 id="9">Saving channel data</h2><p>Saving channel data (or any other <b>uff</b> structure) is exactly as we have just shown. It might just take a bit more time due to the larger amount of data. Here we save <b>uff.scan</b> and <b>uff.channel_data</b></p><pre class="codeinput"><span class="comment">%scan.write(filename);</span>
+channel_data.write(filename);
+uff.index(filename,<span class="string">'/'</span>,display);
+</pre><pre class="codeoutput">Time out! channel_data not written
+UFF: Contents of C:\Users\47456\AppData\Roaming\MathWorks\MATLAB Add-Ons\Toolboxes\USTB\data\test03.uff at /
+   - /b_data: b_data [uff.beamformed_data] size(1,1)
+   - /b_data_copy: b_data_copy [uff.beamformed_data] size(1,1)
+   - /channel_data: channel_data [uff.channel_data] size(1,1)
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Writting data to a UFF file
+%
+% In this example we show how to write channel and beamformed data into a
+% UFF (Ultrasound File Format) file. The handling couldn't be simpler so
+% this is going to be brief.
+%
+% _by Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no> 29.10.2018_
+
+
+%% Getting channel data
+%
+% The first thing we need to save data into a UFF file is, you guessed it,
+% data. Let us generate some channel data using the *fresnel*
+% simulator included in the USTB. We won't get into details here. If you 
+% want to know more about *fresnel* you can find some examples under the
+% _fresnel_ folder.
+%
+% So here we define a 15 angles plane-wave sequence using a 128 elements
+% linear array and a 5.2 MHz pulse. The phantom is a cross of point
+% scatterers.
+
+% phantom
+x_sca=[zeros(1,7) -15e-3:5e-3:15e-3];
+z_sca=[5e-3:5e-3:35e-3 20e-3*ones(1,7)];
+N_sca=length(x_sca);
+pha=uff.phantom();
+pha.sound_speed=1540;            % speed of sound [m/s]
+pha.points=[x_sca.', zeros(N_sca,1), z_sca.', ones(N_sca,1)];    % point scatterer position [m]
+             
+% probe
+prb=uff.linear_array();
+prb.N=128;                  % number of elements 
+prb.pitch=300e-6;           % probe pitch in azimuth [m]
+prb.element_width=270e-6;   % element width [m]
+prb.element_height=5000e-6; % element height [m]
+
+% pulse
+pul=uff.pulse();
+pul.center_frequency=5.2e6;       % transducer frequency [MHz]
+pul.fractional_bandwidth=0.6;     % fractional bandwidth [unitless]
+
+% sequence
+N=31;                           % number of plane waves
+angles=linspace(-0.3,0.3,N);    % angle vector [rad]
+seq=uff.wave();
+for n=1:N 
+    seq(n)=uff.wave();
+    seq(n).source.azimuth=angles(n);
+    seq(n).source.distance=Inf;
+    seq(n).probe=prb;
+    seq(n).sound_speed=pha.sound_speed;
+end
+
+% simulator
+sim=fresnel();
+
+% setting input data 
+sim.phantom=pha;                % phantom
+sim.pulse=pul;                  % transmitted pulse
+sim.probe=prb;                  % probe
+sim.sequence=seq;               % beam sequence
+sim.sampling_frequency=41.6e6;  % sampling frequency [Hz]
+
+% launch the simulation
+channel_data=sim.go();
+
+% setting dataset name & author information
+channel_data.name = 'Test for UFF example';
+channel_data.author = {'Alfonso Rodriguez-Molares <alfonso.r.molares@ntnu.no>'}; 
+channel_data.reference = {'www.ustb.no'};
+
+%% Getting beamformed data
+%
+% We will also generate some beamformed data to save into the same UFF
+% file. To do that we define a scanning grid, a beamformer, and we set it
+% to run.
+
+% scan
+scan=uff.linear_scan('x_axis',linspace(-20e-3,20e-3,256).', 'z_axis', linspace(0e-3,40e-3,256).');
+ 
+% pipeline
+mid=midprocess.das();
+mid.dimension = dimension.both;
+
+mid.channel_data=channel_data;
+mid.scan=scan;
+
+mid.transmit_apodization.window=uff.window.tukey50;
+mid.transmit_apodization.f_number=1.0;
+
+mid.receive_apodization.window=uff.window.tukey50;
+mid.receive_apodization.f_number=1.0;
+
+% beamforming
+b_data=mid.go();
+b_data.plot();
+
+%% Saving beamformed data
+%
+% It's about time we start saving some data. To do so we use the method
+% *write* of the *uff* class. To do we just have to pass the path to the
+% *uff* file to the *write* method of any uff class.
+
+filename = [data_path() filesep 'test03.uff']; 
+b_data.write(filename);
+
+%%
+%
+% Now the beamformed data has been saved into the file. You can check
+% the contents of the file with a HDF5 viewer such as
+%
+% <https://support.hdfgroup.org/products/java/release/download.html HDFView>
+% 
+% But the UFF packet provides a function that list the contents of a UFF
+% file: the *index* function.
+
+display=true;
+index=uff.index(filename,'/',display);
+
+%% 
+% 
+% *uff/index* returns a cell with information on the datasets and
+% groups in the specified location, see: 
+
+index{:}
+
+%%
+% If the flag *display* is set then the
+% function displays that information on screen. *uff/index* is not
+% recursive: it only shows the contents of the specified location. Notice 
+% that name of the dataset inside the UFF file matches the object's name in 
+% MATLAB's workspace 
+
+%%
+%
+% If we try saving the data again then ...
+
+b_data.write(filename);
+
+%%
+%
+% ... a dialog will open asking if we want to overwrite the dataset. This
+% dialog has a timeout of 5 seconds. If you're not quick it will not
+% overwrite the data. Of course to avoid overwritting we can change the
+% name of the dataset within the *uff* file by
+
+b_data.write(filename,'b_data_copy');
+uff.index(filename,'/',display);
+
+%% Saving channel data
+% 
+% Saving channel data (or any other *uff* structure) is exactly as we have
+% just shown. It might just take a bit more time due to the larger amount
+% of data. Here we save *uff.scan* and *uff.channel_data*
+
+%scan.write(filename);
+channel_data.write(filename);
+uff.index(filename,'/',display);
+ 
+
+##### SOURCE END #####
+--></body></html>
